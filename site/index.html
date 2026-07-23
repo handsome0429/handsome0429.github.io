@@ -1,0 +1,2087 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>到底撒样子？ - 可视化科普平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f3f4f6;
+        }
+        .card-hover {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        /* 封面图样式保留（备用） */
+        .cover-img {
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .card-body {
+            min-height: 112px;
+            padding-bottom: 28px;
+        }
+        .card-title {
+            line-height: 1.25;
+            height: 20px;
+            overflow: hidden;
+        }
+        .card-tags {
+            min-height: 22px;
+        }
+        .card-desc {
+            line-height: 1.35;
+            height: 38px;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="w-full bg-white min-h-screen">
+
+        <!-- ====================== 顶部大封面区（词云效果）====================== -->
+        <div class="relative h-[32vh] bg-blue-800 overflow-hidden" 
+             style="backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);">
+            <!-- 叠加一层半透明蒙版增强模糊质感 -->
+            <div class="absolute inset-0 bg-blue-900/30 backdrop-blur-sm"></div>
+            
+            <!-- 词云容器 -->
+            <div class="relative w-full h-full flex items-center justify-center">
+                <!-- 周围词汇 -->
+                <span class="absolute text-white/40 text-xs md:text-sm" style="top: 10%; left: 8%; transform: rotate(-15deg);">可视化</span>
+                <span class="absolute text-white/50 text-xs md:text-sm" style="top: 15%; left: 25%; transform: rotate(10deg);">科普</span>
+                <span class="absolute text-white/30 text-xs md:text-sm" style="top: 8%; left: 45%; transform: rotate(-5deg);">知识</span>
+                <span class="absolute text-white/40 text-xs md:text-sm" style="top: 12%; right: 10%; transform: rotate(12deg);">理解</span>
+                <span class="absolute text-white/50 text-xs md:text-sm" style="top: 25%; left: 5%; transform: rotate(-8deg);">抽象</span>
+                <span class="absolute text-white/30 text-xs md:text-sm" style="top: 30%; left: 18%; transform: rotate(5deg);">具体</span>
+                <span class="absolute text-white/40 text-xs md:text-sm" style="top: 20%; right: 5%; transform: rotate(-10deg);">十万个为什么</span>
+                <span class="absolute text-white/50 text-xs md:text-sm" style="top: 35%; left: 8%; transform: rotate(8deg);">想象</span>
+                <span class="absolute text-white/30 text-xs md:text-sm" style="top: 40%; right: 12%; transform: rotate(-12deg);">直接看</span>
+                <span class="absolute text-white/40 text-xs md:text-sm" style="top: 45%; left: 15%; transform: rotate(3deg);">老师</span>
+                <span class="absolute text-white/50 text-xs md:text-sm" style="top: 50%; right: 8%; transform: rotate(-6deg);">同学们</span>
+                <span class="absolute text-white/30 text-xs md:text-sm" style="bottom: 15%; left: 10%; transform: rotate(7deg);">阅读障碍</span>
+                <span class="absolute text-white/40 text-xs md:text-sm" style="bottom: 20%; left: 25%; transform: rotate(-9deg);">信息平台</span>
+                <span class="absolute text-white/50 text-xs md:text-sm" style="bottom: 12%; right: 15%; transform: rotate(4deg);">动起来</span>
+                <span class="absolute text-white/30 text-xs md:text-sm" style="bottom: 25%; right: 5%; transform: rotate(-3deg);">不懂</span>
+                <span class="absolute text-white/40 text-xs md:text-sm" style="top: 55%; left: 5%; transform: rotate(11deg);">概念</span>
+                <span class="absolute text-white/50 text-xs md:text-sm" style="top: 60%; right: 20%; transform: rotate(-7deg);">原理</span>
+                <span class="absolute text-white/30 text-xs md:text-sm" style="bottom: 30%; left: 35%; transform: rotate(6deg);">图形</span>
+                <span class="absolute text-white/40 text-xs md:text-sm" style="bottom: 35%; right: 30%; transform: rotate(-11deg);">3D</span>
+                <span class="absolute text-white/50 text-xs md:text-sm" style="top: 65%; left: 45%; transform: rotate(2deg);">公式</span>
+                
+                <!-- 中心词汇 -->
+                <div class="relative z-10 text-center">
+                    <h1 class="text-4xl md:text-5xl font-bold mb-4 text-white">到底撒意思？</h1>
+                    <p class="text-xl md:text-2xl font-medium mb-3 text-white/90">别想象，直接看 —— AI 可视化十万个为什么</p>
+                    <p class="text-lg opacity-90 max-w-2xl mx-auto text-white/80">
+                        上学时老师常说：同学们让我们想象一下<br>
+                        在这里直接看就完事了！
+                    </p>
+                    <p class="mt-2 text-sm md:text-base opacity-80 text-white/70">
+                        为阅读障碍人群提供可视化信息平台｜把抽象知识变成看得见的世界
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ====================== 导航栏（保持之前的布局）===================== -->
+        <header class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+            <nav class="flex space-x-6">
+                <a href="#" onclick="filterCards('all')" class="text-blue-600 font-medium" id="nav-all">全部</a>
+                <a href="#" onclick="filterCards('computer-ai')" class="text-gray-600 hover:text-blue-600" id="nav-computer-ai">计算机AI</a>
+                <a href="#" onclick="filterCards('universe')" class="text-gray-600 hover:text-blue-600" id="nav-universe">宇宙</a>
+                <a href="#" onclick="filterCards('math')" class="text-gray-600 hover:text-blue-600" id="nav-math">数学</a>
+                <a href="#" onclick="filterCards('physics')" class="text-gray-600 hover:text-blue-600" id="nav-physics">物理</a>
+                <a href="#" onclick="filterCards('chemistry')" class="text-gray-600 hover:text-blue-600" id="nav-chemistry">化学</a>
+                <a href="#" onclick="filterCards('biology')" class="text-gray-600 hover:text-blue-600" id="nav-biology">生物</a>
+                <a href="#" onclick="filterCards('engineering')" class="text-gray-600 hover:text-blue-600" id="nav-engineering">工程</a>
+            </nav>
+            <div class="flex items-center space-x-4">
+                <div class="relative">
+                    <input id="searchInput" type="text" placeholder="搜索你想看的可视化" class="w-64 px-4 py-2 pl-10 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+                <div id="admin-avatar-btn" class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white cursor-pointer hover:bg-blue-600 transition-colors" title="卡片管理">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                </div>
+            </div>
+        </header>
+
+        <!-- ====================== 卡片列表（换回上一版：移除图片、恢复渐变/灰色背景）===================== -->
+        <main class="px-6 py-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="cards-container">
+            <!-- 卡片1：星图 -->
+            <div class="bg-white border border-gray-100 rounded overflow-hidden card-hover cursor-pointer" onclick="openStarMap()" data-category="universe">
+                <div class="h-44 bg-gray-100 flex items-center justify-center">
+                    <svg class="w-16 h-16 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 12m-1.8 0a1.8 1.8 0 103.6 0a1.8 1.8 0 10-3.6 0"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 12c0-3.6 3.6-6.4 8-6.4 2.6 0 5 1 6.5 2.6"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 12c0 3.6-3.6 6.4-8 6.4-2.6 0-5-1-6.5-2.6"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6.5 9.2c1.4-.9 3.2-1.4 5.5-1.4 2.2 0 4 .5 5.5 1.4"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6.5 14.8c1.4.9 3.2 1.4 5.5 1.4 2.2 0 4-.5 5.5-1.4"></path>
+                    </svg>
+                </div>
+                <div class="p-3 relative card-body">
+                    <h3 class="font-medium text-gray-900 mb-2 card-title">星图</h3>
+                    <div class="flex space-x-2 mb-2 card-tags">
+                        <span class="px-2 py-0.5 text-xs rounded bg-teal-100 text-teal-700">已上线</span>
+                        <span class="px-2 py-0.5 text-xs rounded bg-blue-100 text-blue-700">宇宙</span>
+                    </div>
+                    <p class="text-gray-500 text-sm card-desc">交互式3D星图，探索宇宙的奥秘</p>
+                    <div class="absolute bottom-2 right-2 text-xs text-gray-400">v1.0</div>
+                </div>
+            </div>
+
+            <!-- 卡片16：近地 -->
+            <div id="card-orbit" class="bg-white border border-gray-100 rounded overflow-hidden card-hover cursor-pointer" onclick="openOrbitSim()" data-category="universe" role="button" tabindex="0">
+                <div class="h-44 bg-gray-100 flex items-center justify-center">
+                    <svg class="w-16 h-16 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.5 12a9.5 9.5 0 0119 0"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 2.5a9.5 9.5 0 010 19"></path>
+                    </svg>
+                </div>
+                <div class="p-3 relative card-body">
+                    <h3 class="font-medium text-gray-900 mb-2 card-title">近地</h3>
+                    <div class="flex space-x-2 mb-2 card-tags">
+                        <span class="px-2 py-0.5 text-xs rounded bg-teal-100 text-teal-700">已上线</span>
+                        <span class="px-2 py-0.5 text-xs rounded bg-blue-100 text-blue-700">宇宙</span>
+                    </div>
+                    <p class="text-gray-500 text-sm card-desc">卫星与空间站轨道预测模拟，满级视觉效果</p>
+                    <div class="absolute bottom-2 right-2 text-xs text-gray-400">v0.1</div>
+                </div>
+            </div>
+
+            <!-- 卡片17：电流模拟 -->
+            <div id="card-circuit" class="bg-white border border-gray-100 rounded overflow-hidden card-hover cursor-pointer" onclick="openCircuitSim()" data-category="physics" role="button" tabindex="0">
+                <div class="h-44 bg-gray-100 flex items-center justify-center">
+                    <svg class="w-16 h-16 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                </div>
+                <div class="p-3 relative card-body">
+                    <h3 class="font-medium text-gray-900 mb-2 card-title">电流</h3>
+                    <div class="flex space-x-2 mb-2 card-tags">
+                        <span class="px-2 py-0.5 text-xs rounded bg-teal-100 text-teal-700">已上线</span>
+                        <span class="px-2 py-0.5 text-xs rounded bg-yellow-100 text-yellow-700">物理</span>
+                    </div>
+                    <p class="text-gray-500 text-sm card-desc">全息面包板，欧姆定律动态模拟，电流过载预警</p>
+                    <div class="absolute bottom-2 right-2 text-xs text-gray-400">v1.0</div>
+                </div>
+            </div>
+
+            <!-- 卡片2：三体 -->
+            <div class="bg-white border border-gray-100 rounded overflow-hidden card-hover cursor-pointer" onclick="openThreeBody()" data-category="universe">
+                <div class="h-44 bg-gray-100 flex items-center justify-center">
+                    <svg class="w-16 h-16 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 12m-2 0a2 2 0 104 0a2 2 0 10-4 0"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 12c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8-8 8-8-3.6-8-8z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7.2 6.6c1.4 1.6 3 3.2 4.8 4.8s3.4 3.3 4.8 4.8"></path>
+                    </svg>
+                </div>
+                <div class="p-3 relative card-body">
+                    <h3 class="font-medium text-gray-900 mb-2 card-title">三体</h3>
+                    <div class="flex space-x-2 mb-2 card-tags">
+                        <span class="px-2 py-0.5 text-xs rounded bg-teal-100 text-teal-700">已上线</span>
+                        <span class="px-2 py-0.5 text-xs rounded bg-red-100 text-red-700">宇宙</span>
+                    </div>
+                    <p class="text-gray-500 text-sm card-desc">三体系统模拟，探索混沌运动的奥秘</p>
+                    <div class="absolute bottom-2 right-2 text-xs text-gray-400">v0.1</div>
+                </div>
+            </div>
+
+            <!-- 卡片3：数学公式可视化 -->
+            <div class="bg-white border border-gray-100 rounded overflow-hidden card-hover cursor-pointer" onclick="openMathViz()" data-category="math">
+                <div class="h-44 bg-gray-100 flex items-center justify-center">
+                    <svg class="w-16 h-16 text-fuchsia-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 19h16"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 16c3-7 5-7 8 0s5 7 4-2"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h4m8 0h4"></path>
+                    </svg>
+                </div>
+                <div class="p-3 relative card-body">
+                    <h3 class="font-medium text-gray-900 mb-2 card-title">像数</h3>
+                    <div class="flex space-x-2 mb-2 card-tags">
+                        <span class="px-2 py-0.5 text-xs rounded bg-teal-100 text-teal-700">已上线</span>
+                        <span class="px-2 py-0.5 text-xs rounded bg-purple-100 text-purple-700">数学</span>
+                    </div>
+                    <p class="text-gray-500 text-sm card-desc">函数、微积分、几何图形，动起来就懂了</p>
+                    <div class="absolute bottom-2 right-2 text-xs text-gray-400">v1.8</div>
+                </div>
+            </div>
+
+            <!-- 卡片4：络神 -->
+            <div class="bg-white border border-gray-100 rounded overflow-hidden card-hover cursor-pointer" onclick="openNeuralNetwork()" data-category="computer-ai">
+                <div class="h-44 bg-gray-100 flex items-center justify-center">
+                    <svg class="w-16 h-16 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 8a2 2 0 110-4 2 2 0 010 4zm10 6a2 2 0 110-4 2 2 0 010 4zM7 20a2 2 0 110-4 2 2 0 010 4z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8.7 6.7l6.6 3.6M8.7 17.3l6.6-3.6M7 8v8"></path>
+                    </svg>
+                </div>
+                <div class="p-3 relative card-body">
+                    <h3 class="font-medium text-gray-900 mb-2 card-title">络神</h3>
+                    <div class="flex space-x-2 mb-2 card-tags">
+                        <span class="px-2 py-0.5 text-xs rounded bg-teal-100 text-teal-700">已上线</span>
+                        <span class="px-2 py-0.5 text-xs rounded bg-purple-100 text-purple-700">计算机AI</span>
+                    </div>
+                    <p class="text-gray-500 text-sm card-desc">神经网络结构3D可视化，直观理解AI原理</p>
+                    <div class="absolute bottom-2 right-2 text-xs text-gray-400">v1.1</div>
+                </div>
+            </div>
+
+            <!-- 卡片5：芯圆 -->
+            <div class="bg-white border border-gray-100 rounded overflow-hidden card-hover cursor-pointer" onclick="openWaferLithography()" data-category="engineering">
+                <div class="h-44 bg-gray-100 flex items-center justify-center">
+                    <svg class="w-16 h-16 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
+                    </svg>
+                </div>
+                <div class="p-3 relative card-body">
+                    <h3 class="font-medium text-gray-900 mb-2 card-title">芯圆</h3>
+                    <div class="flex space-x-2 mb-2 card-tags">
+                        <span class="px-2 py-0.5 text-xs rounded bg-teal-100 text-teal-700">已上线</span>
+                        <span class="px-2 py-0.5 text-xs rounded bg-orange-100 text-orange-700">工程</span>
+                    </div>
+                    <p class="text-gray-500 text-sm card-desc">芯片光刻3D可视化，探索半导体制造的奥秘</p>
+                    <div class="absolute bottom-2 right-2 text-xs text-gray-400">v1.0</div>
+                </div>
+            </div>
+
+
+
+            <!-- 卡片6：化合 -->
+            <div class="bg-white border border-gray-100 rounded overflow-hidden card-hover cursor-pointer" onclick="openHehua()" data-category="chemistry">
+                <div class="h-44 bg-gray-100 flex items-center justify-center">
+                    <svg class="w-16 h-16 text-pink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 2v5l-4.6 8.2A3 3 0 008 20h8a3 3 0 002.6-4.8L14 7V2"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.5 6h3"></path>
+                    </svg>
+                </div>
+                <div class="p-3 relative card-body">
+                    <h3 class="font-medium text-gray-900 mb-2 card-title">化合</h3>
+                    <div class="flex space-x-2 mb-2 card-tags">
+                        <span class="px-2 py-0.5 text-xs rounded bg-teal-100 text-teal-700">已上线</span>
+                        <span class="px-2 py-0.5 text-xs rounded bg-pink-100 text-pink-700">化学</span>
+                    </div>
+                    <p class="text-gray-500 text-sm card-desc">3D 分子库 + 反应模拟，直观看见化合与生成</p>
+                    <div class="absolute bottom-2 right-2 text-xs text-gray-400">v1.0</div>
+                </div>
+            </div>
+
+            <!-- 卡片7：核爆科普 -->
+            <div class="bg-white border border-gray-100 rounded overflow-hidden card-hover cursor-pointer" onclick="openNukeBlast()" data-category="physics">
+                <div class="h-44 bg-gray-100 flex items-center justify-center">
+                    <svg class="w-16 h-16 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 2v4m0 0l2-2m-2 2l-2-2M7 13c1.5 1.2 3.2 1.8 5 1.8S15.5 14.2 17 13m-9.5 7.5c1.2.7 2.7 1.2 4.5 1.2s3.3-.5 4.5-1.2M5 12c0 4 3.1 7 7 7s7-3 7-7-3.1-7-7-7-7 3-7 7z"></path>
+                    </svg>
+                </div>
+                <div class="p-3 relative card-body">
+                    <h3 class="font-medium text-gray-900 mb-2 card-title">核爆</h3>
+                    <div class="flex space-x-2 mb-2 card-tags">
+                        <span class="px-2 py-0.5 text-xs rounded bg-teal-100 text-teal-700">已上线</span>
+                        <span class="px-2 py-0.5 text-xs rounded bg-red-100 text-red-700">物理</span>
+                    </div>
+                    <p class="text-gray-500 text-sm card-desc">闪光、火球、冲击波、云团与音爆延迟的电影级可视化</p>
+                    <div class="absolute bottom-2 right-2 text-xs text-gray-400">v0.1</div>
+                </div>
+            </div>
+
+            <!-- 卡片8：电与磁 -->
+            <div class="bg-white border border-gray-100 rounded overflow-hidden card-hover cursor-pointer" onclick="openEmFields()" data-category="physics">
+                <div class="h-44 bg-gray-100 flex items-center justify-center">
+                    <svg class="w-16 h-16 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3v18m0-18c4.418 0 8 2.239 8 5s-3.582 5-8 5-8-2.239-8-5 3.582-5 8-5zm0 10c4.418 0 8 2.239 8 5s-3.582 5-8 5-8-2.239-8-5 3.582-5 8-5z"></path>
+                    </svg>
+                </div>
+                <div class="p-3 relative card-body">
+                    <h3 class="font-medium text-gray-900 mb-2 card-title">电磁</h3>
+                    <div class="flex space-x-2 mb-2 card-tags">
+                        <span class="px-2 py-0.5 text-xs rounded bg-teal-100 text-teal-700">已上线</span>
+                        <span class="px-2 py-0.5 text-xs rounded bg-green-100 text-green-700">物理</span>
+                    </div>
+                    <p class="text-gray-500 text-sm card-desc">3D 沙盘：场线、等势与探针测量，直观看见电场</p>
+                    <div class="absolute bottom-2 right-2 text-xs text-gray-400">v0.1</div>
+                </div>
+            </div>
+
+            <!-- 卡片9：黑洞可视化 -->
+            <div class="bg-white border border-gray-100 rounded overflow-hidden card-hover cursor-pointer" onclick="openBlackHole()" data-category="universe">
+                <div class="h-44 bg-gray-100 flex items-center justify-center">
+                    <svg class="w-16 h-16 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 12m-3.5 0a3.5 3.5 0 107 0a3.5 3.5 0 10-7 0"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 12c0-4 3.6-7 8-7s8 3 8 7-3.6 7-8 7-8-3-8-7z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6.2 9.2c1.6-1.1 3.7-1.7 5.8-1.7s4.2.6 5.8 1.7"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6.2 14.8c1.6 1.1 3.7 1.7 5.8 1.7s4.2-.6 5.8-1.7"></path>
+                    </svg>
+                </div>
+                <div class="p-3 relative card-body">
+                    <h3 class="font-medium text-gray-900 mb-2 card-title">黑洞</h3>
+                    <div class="flex space-x-2 mb-2 card-tags">
+                        <span class="px-2 py-0.5 text-xs rounded bg-teal-100 text-teal-700">已上线</span>
+                        <span class="px-2 py-0.5 text-xs rounded bg-blue-100 text-blue-700">宇宙</span>
+                    </div>
+                    <p class="text-gray-500 text-sm card-desc">黑洞、吸积盘与引力透镜的可视化演示</p>
+                    <div class="absolute bottom-2 right-2 text-xs text-gray-400">v0.1</div>
+                </div>
+            </div>
+
+            <!-- 卡片10：数字化生产 -->
+            <div class="bg-white border border-gray-100 rounded overflow-hidden card-hover cursor-pointer" onclick="openDigitalProduction3D()" data-category="engineering">
+                <div class="h-44 bg-gray-100 flex items-center justify-center">
+                    <svg class="w-16 h-16 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 20V9l8-4 8 4v11"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 20v-6h10v6"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h.01M12 12h.01M15 12h.01"></path>
+                    </svg>
+                </div>
+                <div class="p-3 relative card-body">
+                    <h3 class="font-medium text-gray-900 mb-2 card-title">数业</h3>
+                    <div class="flex space-x-2 mb-2 card-tags">
+                        <span class="px-2 py-0.5 text-xs rounded bg-teal-100 text-teal-700">已上线</span>
+                        <span class="px-2 py-0.5 text-xs rounded bg-orange-100 text-orange-700">工程</span>
+                    </div>
+                    <p class="text-gray-500 text-sm card-desc">数字孪生式 3D 业务流程模拟</p>
+                    <div class="absolute bottom-2 right-2 text-xs text-gray-400">v0.1</div>
+                </div>
+            </div>
+            
+            <!-- 卡片11：相对 -->
+            <div id="card-relative" class="bg-white border border-gray-100 rounded overflow-hidden card-hover cursor-pointer" onclick="openRelative()" data-category="physics" role="button" tabindex="0">
+                <div class="h-44 bg-gray-100 flex items-center justify-center">
+                    <svg class="w-16 h-16 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 12c2.5-4 5-6 8-6s5.5 2 8 6c-2.5 4-5 6-8 6s-5.5-2-8-6z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v12"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 9.5h8M8 14.5h8"></path>
+                    </svg>
+                </div>
+                <div class="p-3 relative card-body">
+                    <h3 class="font-medium text-gray-900 mb-2 card-title">相对</h3>
+                    <div class="flex space-x-2 mb-2 card-tags">
+                        <span class="px-2 py-0.5 text-xs rounded bg-teal-100 text-teal-700">已上线</span>
+                        <span class="px-2 py-0.5 text-xs rounded bg-green-100 text-green-700">物理</span>
+                    </div>
+                    <p class="text-gray-500 text-sm card-desc">相对论可视化：时空、速度与观测效应的交互模拟</p>
+                    <div class="absolute bottom-2 right-2 text-xs text-gray-400">v0.1</div>
+                </div>
+            </div>
+
+            <!-- 卡片12：浮沉 -->
+            <div id="card-buoyancy" class="bg-white border border-gray-100 rounded overflow-hidden card-hover cursor-pointer" onclick="openBuoyancy()" data-category="physics" role="button" tabindex="0">
+                <div class="h-44 bg-gray-100 flex items-center justify-center">
+                    <svg class="w-16 h-16 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16c1.5 0 1.5-1 3-1s1.5 1 3 1s1.5-1 3-1s1.5 1 3 1s1.5-1 3-1s1.5 1 3 1"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 6l3-2l3 2v4a3 3 0 11-6 0V6z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v9"></path>
+                    </svg>
+                </div>
+                <div class="p-3 relative card-body">
+                    <h3 class="font-medium text-gray-900 mb-2 card-title">浮沉</h3>
+                    <div class="flex space-x-2 mb-2 card-tags">
+                        <span class="px-2 py-0.5 text-xs rounded bg-teal-100 text-teal-700">已上线</span>
+                        <span class="px-2 py-0.5 text-xs rounded bg-green-100 text-green-700">物理</span>
+                    </div>
+                    <p class="text-gray-500 text-sm card-desc">浮力与密度模拟：物体上浮、下沉与平衡状态演示</p>
+                    <div class="absolute bottom-2 right-2 text-xs text-gray-400">v0.1</div>
+                </div>
+            </div>
+
+            <!-- 卡片13：撞击 -->
+            <div id="card-impact" class="bg-white border border-gray-100 rounded overflow-hidden card-hover cursor-pointer" onclick="openImpact()" data-category="universe" role="button" tabindex="0">
+                <div class="h-44 bg-gray-100 flex items-center justify-center">
+                    <svg class="w-16 h-16 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7.5 14a4.5 4.5 0 100-9a4.5 4.5 0 000 9z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 9l4-4m-1 0h2v2"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11.5 12.5l3 3"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 19c3.5-1.2 7-1.2 10.5 0"></path>
+                    </svg>
+                </div>
+                <div class="p-3 relative card-body">
+                    <h3 class="font-medium text-gray-900 mb-2 card-title">撞击</h3>
+                    <div class="flex space-x-2 mb-2 card-tags">
+                        <span class="px-2 py-0.5 text-xs rounded bg-teal-100 text-teal-700">已上线</span>
+                        <span class="px-2 py-0.5 text-xs rounded bg-blue-100 text-blue-700">宇宙</span>
+                    </div>
+                    <p class="text-gray-500 text-sm card-desc">行星撞击地球的模拟效果，展示冲击波、火球与尘埃扩散</p>
+                    <div class="absolute bottom-2 right-2 text-xs text-gray-400">v0.1</div>
+                </div>
+            </div>
+
+            <!-- 卡片14：胞子 -->
+            <div id="card-cell" class="bg-white border border-gray-100 rounded overflow-hidden card-hover cursor-pointer" onclick="openCell3D()" data-category="biology" role="button" tabindex="0">
+                <div class="h-44 bg-gray-100 flex items-center justify-center">
+                    <svg class="w-16 h-16 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 21c4.97 0 9-4.03 9-9s-4.03-9-9-9s-9 4.03-9 9s4.03 9 9 9z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8.5 11.5c1.2-2.4 3.4-3.2 5.6-2.4"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.2 15.2c1.8 1.4 3.8 1.4 5.6 0"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.2 12.2l.8.8"></path>
+                    </svg>
+                </div>
+                <div class="p-3 relative card-body">
+                    <h3 class="font-medium text-gray-900 mb-2 card-title">胞子</h3>
+                    <div class="flex space-x-2 mb-2 card-tags">
+                        <span class="px-2 py-0.5 text-xs rounded bg-teal-100 text-teal-700">已上线</span>
+                        <span class="px-2 py-0.5 text-xs rounded bg-emerald-100 text-emerald-700">生物</span>
+                    </div>
+                    <p class="text-gray-500 text-sm card-desc">胞子：3D 血液细胞可视化，点击结构查看功能与知识点</p>
+                    <div class="absolute bottom-2 right-2 text-xs text-gray-400">v0.1</div>
+                </div>
+            </div>
+
+            <!-- 卡片15：台风 -->
+            <div id="card-typhoon" class="bg-white border border-gray-100 rounded overflow-hidden card-hover cursor-pointer" onclick="openTyphoon3D()" data-category="physics" role="button" tabindex="0">
+                <div class="h-44 bg-gray-100 flex items-center justify-center">
+                    <svg class="w-16 h-16 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6l3 3"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7.05 7.05a8 8 0 109.9 9.9"></path>
+                    </svg>
+                </div>
+                <div class="p-3 relative card-body">
+                    <h3 class="font-medium text-gray-900 mb-2 card-title">台风</h3>
+                    <div class="flex space-x-2 mb-2 card-tags">
+                        <span class="px-2 py-0.5 text-xs rounded bg-teal-100 text-teal-700">已上线</span>
+                        <span class="px-2 py-0.5 text-xs rounded bg-sky-100 text-sky-700">物理</span>
+                    </div>
+                    <p class="text-gray-500 text-sm card-desc">台风全生命周期可视化，点击风眼、云墙与螺旋雨带</p>
+                    <div class="absolute bottom-2 right-2 text-xs text-gray-400">v0.1</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 星图软件嵌套页 -->
+    <div id="starMapModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-none mx-4 h-[90vh] flex flex-col overflow-hidden">
+            <div class="p-2 border-b border-gray-200 flex justify-between items-center bg-white bg-opacity-80">
+                <h2 class="text-xl font-bold text-gray-900">星图</h2>
+                <button onclick="closeStarMap()" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="flex-1 overflow-hidden">
+                <iframe data-src="/starmaps/" src="" class="w-full h-full border-0 rounded-b-lg" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- 三体软件嵌套页 -->
+    <div id="threeBodyModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-none mx-4 h-[90vh] flex flex-col overflow-hidden">
+            <div class="p-2 border-b border-gray-200 flex justify-between items-center bg-white bg-opacity-80">
+                <h2 class="text-xl font-bold text-gray-900">三体模拟</h2>
+                <button onclick="closeThreeBody()" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="flex-1 overflow-hidden">
+                <iframe data-src="/threebody/" src="" class="w-full h-full border-0 rounded-b-lg" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- 数学公式可视化嵌套页 -->
+    <div id="mathVizModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-none mx-4 h-[90vh] flex flex-col overflow-hidden">
+            <div class="p-2 border-b border-gray-200 flex justify-between items-center bg-white bg-opacity-80">
+                <h2 class="text-xl font-bold text-gray-900">像数</h2>
+                <button onclick="closeMathViz()" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="flex-1 overflow-hidden">
+                <iframe data-src="/mathviz/" src="" class="w-full h-full border-0 rounded-b-lg" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- 络神嵌套页 -->
+    <div id="neuralNetworkModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-none mx-4 h-[90vh] flex flex-col overflow-hidden">
+            <div class="p-2 border-b border-gray-200 flex justify-between items-center bg-white bg-opacity-80">
+                <h2 class="text-xl font-bold text-gray-900">络神</h2>
+                <button onclick="closeNeuralNetwork()" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="flex-1 overflow-hidden">
+                <iframe data-src="/neural/" src="" class="w-full h-full border-0 rounded-b-lg" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- 芯圆项目嵌套页 -->
+    <div id="waferLithographyModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-none mx-4 h-[90vh] flex flex-col overflow-hidden">
+            <div class="p-2 border-b border-gray-200 flex justify-between items-center bg-white bg-opacity-80">
+                <h2 class="text-xl font-bold text-gray-900">芯圆</h2>
+                <button onclick="closeWaferLithography()" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="flex-1 overflow-hidden">
+                <iframe data-src="/wafer/" src="" class="w-full h-full border-0 rounded-b-lg" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- 化合项目嵌套页 -->
+    <div id="hehuaModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-none mx-4 h-[90vh] flex flex-col overflow-hidden">
+            <div class="p-2 border-b border-gray-200 flex justify-between items-center bg-white bg-opacity-80">
+                <h2 class="text-xl font-bold text-gray-900">化合</h2>
+                <button onclick="closeHehua()" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="flex-1 overflow-hidden">
+                <iframe data-src="/hehua/" src="" class="w-full h-full border-0 rounded-b-lg" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <div id="nukeBlastModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-none mx-4 h-[90vh] flex flex-col overflow-hidden">
+            <div class="p-2 border-b border-gray-200 flex justify-between items-center bg-white bg-opacity-80">
+                <div class="flex items-center gap-3">
+                    <h2 class="text-xl font-bold text-gray-900">核爆</h2>
+                </div>
+                <button onclick="closeNukeBlast()" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="flex-1 overflow-hidden">
+                <iframe data-src="/nuke/" src="" class="w-full h-full border-0 rounded-b-lg" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <div id="emFieldsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-none mx-4 h-[90vh] flex flex-col overflow-hidden">
+            <div class="p-2 border-b border-gray-200 flex justify-between items-center bg-white bg-opacity-80">
+                <div class="flex items-center gap-3">
+                    <h2 class="text-xl font-bold text-gray-900">电磁</h2>
+                </div>
+                <button onclick="closeEmFields()" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="flex-1 overflow-hidden">
+                <iframe data-src="/em/" src="" class="w-full h-full border-0 rounded-b-lg" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <div id="blackHoleModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-none mx-4 h-[90vh] flex flex-col overflow-hidden">
+            <div class="p-2 border-b border-gray-200 flex justify-between items-center bg-white bg-opacity-80">
+                <div class="flex items-center gap-3">
+                    <h2 class="text-xl font-bold text-gray-900">黑洞</h2>
+                </div>
+                <button onclick="closeBlackHole()" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="flex-1 overflow-hidden">
+                <iframe data-src="/black-hole/" src="" class="w-full h-full border-0 rounded-b-lg" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <div id="digitalProduction3DModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-none mx-4 h-[90vh] flex flex-col overflow-hidden">
+            <div class="p-2 border-b border-gray-200 flex justify-between items-center bg-white bg-opacity-80">
+                <div class="flex items-center gap-3">
+                    <h2 class="text-xl font-bold text-gray-900">数字化生产（3D）</h2>
+                </div>
+                <button onclick="closeDigitalProduction3D()" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="flex-1 overflow-hidden">
+                <iframe data-src="/digital-production/" src="" class="w-full h-full border-0 rounded-b-lg" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <div id="relativeModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-none mx-4 h-[90vh] flex flex-col overflow-hidden">
+            <div class="p-2 border-b border-gray-200 flex justify-between items-center bg-white bg-opacity-80">
+                <div class="flex items-center gap-3">
+                    <h2 class="text-xl font-bold text-gray-900">相对</h2>
+                </div>
+                <button onclick="closeRelative()" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="flex-1 overflow-hidden">
+                <iframe data-src="/relativity/" src="" class="w-full h-full border-0 rounded-b-lg" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <div id="buoyancyModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-none mx-4 h-[90vh] flex flex-col overflow-hidden">
+            <div class="p-2 border-b border-gray-200 flex justify-between items-center bg-white bg-opacity-80">
+                <div class="flex items-center gap-3">
+                    <h2 class="text-xl font-bold text-gray-900">浮沉</h2>
+                </div>
+                <button onclick="closeBuoyancy()" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="flex-1 overflow-hidden">
+                <iframe data-src="/buoyancy/" src="" class="w-full h-full border-0 rounded-b-lg" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <div id="impactModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-none mx-4 h-[90vh] flex flex-col overflow-hidden">
+            <div class="p-2 border-b border-gray-200 flex justify-between items-center bg-white bg-opacity-80">
+                <div class="flex items-center gap-3">
+                    <h2 class="text-xl font-bold text-gray-900">撞击</h2>
+                </div>
+                <button onclick="closeImpact()" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="flex-1 overflow-hidden">
+                <iframe data-src="/impact/" src="" class="w-full h-full border-0 rounded-b-lg" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <div id="cell3DModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-none mx-4 h-[90vh] flex flex-col overflow-hidden">
+            <div class="p-2 border-b border-gray-200 flex justify-between items-center bg-white bg-opacity-80">
+                <div class="flex items-center gap-3">
+                    <h2 class="text-xl font-bold text-gray-900">胞子</h2>
+                </div>
+                <button onclick="closeCell3D()" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="flex-1 overflow-hidden">
+                <iframe data-src="/cell/" src="" class="w-full h-full border-0 rounded-b-lg" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <div id="typhoon3DModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-none mx-4 h-[90vh] flex flex-col overflow-hidden">
+            <div class="p-2 border-b border-gray-200 flex justify-between items-center bg-white bg-opacity-80">
+                <div class="flex items-center gap-3">
+                    <h2 class="text-xl font-bold text-gray-900">台风</h2>
+                </div>
+                <button onclick="closeTyphoon3D()" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="flex-1 overflow-hidden">
+                <iframe data-src="/typhoon/" src="" class="w-full h-full border-0 rounded-b-lg" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <div id="orbitSimModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-none mx-4 h-[90vh] flex flex-col overflow-hidden">
+            <div class="p-2 border-b border-gray-200 flex justify-between items-center bg-white bg-opacity-80">
+                <div class="flex items-center gap-3">
+                    <h2 class="text-xl font-bold text-gray-900">近地</h2>
+                </div>
+                <button onclick="closeOrbitSim()" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="flex-1 overflow-hidden">
+                <iframe data-src="/orbit/" src="" class="w-full h-full border-0 rounded-b-lg" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentCategory = 'all';
+
+        function applyFilters() {
+            const keyword = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
+
+            const cards = document.querySelectorAll('#cards-container > div');
+            cards.forEach(card => {
+                const cardCategory = card.getAttribute('data-category') || '';
+                const text = card.textContent.toLowerCase();
+                const matchCategory = currentCategory === 'all' || cardCategory === currentCategory;
+                const matchKeyword = !keyword || text.includes(keyword);
+                card.style.display = matchCategory && matchKeyword ? 'block' : 'none';
+            });
+        }
+
+        // 筛选卡片功能
+        function filterCards(category) {
+            currentCategory = category;
+
+            // 更新导航栏样式
+            const navLinks = document.querySelectorAll('nav a');
+            navLinks.forEach(link => {
+                link.classList.remove('text-blue-600', 'font-medium');
+                link.classList.add('text-gray-600');
+            });
+            
+            const activeNav = document.getElementById('nav-' + category);
+            if (activeNav) {
+                activeNav.classList.remove('text-gray-600');
+                activeNav.classList.add('text-blue-600', 'font-medium');
+            }
+
+            applyFilters();
+        }
+
+        function showModal(id) {
+            var modal = document.getElementById(id);
+            if (!modal) return;
+            modal.classList.remove('hidden');
+            modal.style.display = 'flex';
+            const iframe = modal.querySelector('iframe[data-src]');
+            if (iframe && !iframe.getAttribute('src')) {
+                iframe.setAttribute('src', iframe.getAttribute('data-src') || '');
+            }
+        }
+
+        function hideModal(id) {
+            var modal = document.getElementById(id);
+            if (!modal) return;
+            modal.classList.add('hidden');
+            modal.style.display = 'none';
+            const iframe = modal.querySelector('iframe[data-src]');
+            if (iframe) {
+                iframe.setAttribute('src', '');
+            }
+        }
+        
+        // 简化的openStarMap函数
+        function openStarMap() {
+            showModal('starMapModal');
+        }
+
+        function closeStarMap() {
+            hideModal('starMapModal');
+        }
+
+        // 三体系统模拟函数
+        function openThreeBody() {
+            showModal('threeBodyModal');
+        }
+
+        function closeThreeBody() {
+            hideModal('threeBodyModal');
+        }
+
+        // 数学公式可视化函数
+        function openMathViz() {
+            showModal('mathVizModal');
+        }
+
+        function closeMathViz() {
+            hideModal('mathVizModal');
+        }
+        
+        // 神经网络可视化函数
+        function openNeuralNetwork() {
+            showModal('neuralNetworkModal');
+        }
+        
+        function closeNeuralNetwork() {
+            hideModal('neuralNetworkModal');
+        }
+
+        // 芯圆项目函数
+        function openWaferLithography() {
+            showModal('waferLithographyModal');
+        }
+        
+        function closeWaferLithography() {
+            hideModal('waferLithographyModal');
+        }
+
+        // 化合项目函数
+        function openHehua() {
+            showModal('hehuaModal');
+        }
+        
+        function closeHehua() {
+            hideModal('hehuaModal');
+        }
+
+        function openNukeBlast() {
+            showModal('nukeBlastModal');
+        }
+
+        function closeNukeBlast() {
+            hideModal('nukeBlastModal');
+        }
+
+        function openEmFields() {
+            showModal('emFieldsModal');
+        }
+
+        function closeEmFields() {
+            hideModal('emFieldsModal');
+        }
+
+        function openBlackHole() {
+            showModal('blackHoleModal');
+        }
+
+        function closeBlackHole() {
+            hideModal('blackHoleModal');
+        }
+
+        function openDigitalProduction3D() {
+            showModal('digitalProduction3DModal');
+        }
+
+        function closeDigitalProduction3D() {
+            hideModal('digitalProduction3DModal');
+        }
+
+        function openRelative() {
+            const modal = document.getElementById('relativeModal');
+            if (!modal) {
+                window.open('/relativity/', '_blank');
+                return;
+            }
+            showModal('relativeModal');
+        }
+
+        function closeRelative() {
+            hideModal('relativeModal');
+        }
+
+        function openBuoyancy() {
+            const modal = document.getElementById('buoyancyModal');
+            if (!modal) {
+                window.open('/buoyancy/', '_blank');
+                return;
+            }
+            showModal('buoyancyModal');
+        }
+
+        function closeBuoyancy() {
+            hideModal('buoyancyModal');
+        }
+
+        function openImpact() {
+            const modal = document.getElementById('impactModal');
+            if (!modal) {
+                window.open('/impact/', '_blank');
+                return;
+            }
+            showModal('impactModal');
+        }
+
+        function closeImpact() {
+            hideModal('impactModal');
+        }
+
+        function openCell3D() {
+            const modal = document.getElementById('cell3DModal');
+            if (!modal) {
+                window.open('/cell/', '_blank');
+                return;
+            }
+            showModal('cell3DModal');
+        }
+
+        function closeCell3D() {
+            hideModal('cell3DModal');
+        }
+
+        function openTyphoon3D() {
+            const modal = document.getElementById('typhoon3DModal');
+            if (!modal) {
+                window.open('/typhoon/', '_blank');
+                return;
+            }
+            showModal('typhoon3DModal');
+        }
+
+        function closeTyphoon3D() {
+            hideModal('typhoon3DModal');
+        }
+
+        function openCircuitSim() {
+            window.open('/circuit/', '_blank');
+        }
+
+        function openOrbitSim() {
+            const modal = document.getElementById('orbitSimModal');
+            if (!modal) {
+                window.open('/orbit/', '_blank');
+                return;
+            }
+            showModal('orbitSimModal');
+        }
+
+        function closeOrbitSim() {
+            hideModal('orbitSimModal');
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('input', applyFilters);
+            }
+            const cardRelative = document.getElementById('card-relative');
+            if (cardRelative) {
+                cardRelative.addEventListener('click', openRelative);
+                cardRelative.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        openRelative();
+                    }
+                });
+            }
+            const cardImpact = document.getElementById('card-impact');
+            if (cardImpact) {
+                cardImpact.addEventListener('click', openImpact);
+                cardImpact.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        openImpact();
+                    }
+                });
+            }
+            const cardBuoyancy = document.getElementById('card-buoyancy');
+            if (cardBuoyancy) {
+                cardBuoyancy.addEventListener('click', openBuoyancy);
+                cardBuoyancy.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        openBuoyancy();
+                    }
+                });
+            }
+            applyFilters();
+        });
+    </script>
+    <script type="text/plain" id="legacy-nukeViz">
+        const nukeViz = (() => {
+            const el = {};
+            const sim = {
+                running: false,
+                playing: false,
+                timeScale: 1,
+                t: 0,
+                duration: 30,
+                lastTs: 0,
+                seed: 1337,
+                center: { x: 0, y: 0 },
+                view: { zoom: 1, panX: 0, panY: 0 },
+                shake: { strength: 1, t: 0 },
+                params: {
+                    intensity: 6,
+                    burst: 'air',
+                    env: 'plain',
+                    distance: 2,
+                    quality: 'med',
+                    fx: { flash: true, shock: true, cloud: true, debris: true, rings: true, shake: true }
+                },
+                particles: [],
+                debris: [],
+                rings: [],
+                city: []
+            };
+
+            let ctx = null;
+            let raf = 0;
+            let isPointerDown = false;
+            let pointerLast = { x: 0, y: 0 };
+            let wheelCooldown = 0;
+            let wasPlayingBeforeScrub = false;
+            let isScrubbing = false;
+            let uiWired = false;
+            let initialized = false;
+
+            function mulberry32(a) {
+                return function () {
+                    let t = a += 0x6D2B79F5;
+                    t = Math.imul(t ^ (t >>> 15), t | 1);
+                    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+                    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+                };
+            }
+
+            function clamp(v, a, b) {
+                return Math.min(b, Math.max(a, v));
+            }
+
+            function lerp(a, b, t) {
+                return a + (b - a) * t;
+            }
+
+            function easeOutCubic(t) {
+                const x = clamp(t, 0, 1);
+                return 1 - Math.pow(1 - x, 3);
+            }
+
+            function pickDistanceLabel(d) {
+                if (d === 1) return '近';
+                if (d === 2) return '中';
+                return '远';
+            }
+
+            function getDistanceMeters() {
+                if (sim.params.distance === 1) return 1500;
+                if (sim.params.distance === 2) return 5000;
+                return 12000;
+            }
+
+            function qualityPreset() {
+                if (sim.params.quality === 'low') return { particles: 700, debris: 260, cloud: 900 };
+                if (sim.params.quality === 'high') return { particles: 1800, debris: 700, cloud: 2200 };
+                return { particles: 1200, debris: 420, cloud: 1500 };
+            }
+
+            function resize() {
+                if (!el.canvas || !ctx) return;
+                const rect = el.app.getBoundingClientRect();
+                const dpr = Math.min(2, window.devicePixelRatio || 1);
+                const w = Math.max(1, Math.floor(rect.width * dpr));
+                const h = Math.max(1, Math.floor(rect.height * dpr));
+                if (el.canvas.width !== w || el.canvas.height !== h) {
+                    el.canvas.width = w;
+                    el.canvas.height = h;
+                }
+                ctx.setTransform(1, 0, 0, 1, 0, 0);
+            }
+
+            function screenToWorld(x, y) {
+                const dpr = Math.min(2, window.devicePixelRatio || 1);
+                const w = el.canvas.width;
+                const h = el.canvas.height;
+                const sx = x * dpr;
+                const sy = y * dpr;
+                const cx = w * 0.5 + sim.view.panX;
+                const cy = h * 0.62 + sim.view.panY;
+                return {
+                    x: (sx - cx) / sim.view.zoom,
+                    y: (sy - cy) / sim.view.zoom
+                };
+            }
+
+            function worldToScreen(wx, wy) {
+                const w = el.canvas.width;
+                const h = el.canvas.height;
+                const cx = w * 0.5 + sim.view.panX;
+                const cy = h * 0.62 + sim.view.panY;
+                return {
+                    x: cx + wx * sim.view.zoom,
+                    y: cy + wy * sim.view.zoom
+                };
+            }
+
+            function resetView() {
+                sim.view.zoom = 1;
+                sim.view.panX = 0;
+                sim.view.panY = 0;
+            }
+
+            function buildCity(rng) {
+                sim.city = [];
+                const count = 80;
+                for (let i = 0; i < count; i++) {
+                    const x = lerp(-520, 520, rng());
+                    const w = lerp(10, 34, rng());
+                    const h = lerp(30, 180, rng());
+                    const depth = lerp(0.55, 1.0, rng());
+                    sim.city.push({ x, w, h, depth });
+                }
+                sim.city.sort((a, b) => a.depth - b.depth);
+            }
+
+            function initScene() {
+                sim.particles = [];
+                sim.debris = [];
+                sim.rings = [];
+                sim.center = { x: 0, y: 0 };
+                resetView();
+                const rng = mulberry32(sim.seed);
+                buildCity(rng);
+            }
+
+            function detonate() {
+                sim.t = 0;
+                sim.lastTs = 0;
+                sim.shake.t = 0;
+                sim.particles = [];
+                sim.debris = [];
+                sim.rings = [];
+
+                const rng = mulberry32(sim.seed);
+                const q = qualityPreset();
+                const intensity = sim.params.intensity;
+
+                const fireballCount = Math.floor(q.particles * (0.55 + intensity * 0.03));
+                const cloudCount = Math.floor(q.cloud * (0.55 + intensity * 0.035));
+                const debrisCount = Math.floor(q.debris * (0.4 + intensity * 0.05));
+
+                const fireballEnergy = 140 + intensity * 30;
+                const upBias = sim.params.burst === 'air' ? 1.2 : 0.8;
+                const ringBase = 140 + intensity * 22;
+
+                sim.rings.push({ type: 'shock', t0: 0.15, speed: ringBase * (sim.params.burst === 'air' ? 1.1 : 0.95), life: 8.5, width: 12 + intensity * 1.5 });
+                sim.rings.push({ type: 'dust', t0: 0.5, speed: ringBase * 0.85, life: 11, width: 18 + intensity * 2.2 });
+
+                const ring1 = 240 + intensity * 40;
+                const ring2 = 430 + intensity * 64;
+                const ring3 = 640 + intensity * 86;
+                sim.rings.push({ type: 'zone', t0: 0, speed: 0, life: sim.duration, width: 2, r: ring1, label: '强光/眩目' });
+                sim.rings.push({ type: 'zone', t0: 0, speed: 0, life: sim.duration, width: 2, r: ring2, label: '冲击波明显' });
+                sim.rings.push({ type: 'zone', t0: 0, speed: 0, life: sim.duration, width: 2, r: ring3, label: '强冲击波' });
+
+                for (let i = 0; i < fireballCount; i++) {
+                    const a = rng() * Math.PI * 2;
+                    const r = Math.pow(rng(), 0.6) * (18 + intensity * 2.6);
+                    const px = sim.center.x + Math.cos(a) * r;
+                    const py = sim.center.y + Math.sin(a) * r * 0.5;
+                    const sp = fireballEnergy * (0.35 + 0.65 * Math.pow(rng(), 0.45));
+                    const vx = Math.cos(a) * sp * (0.55 + 0.25 * rng());
+                    const vy = Math.sin(a) * sp * (0.25 + 0.20 * rng()) - sp * 0.12;
+                    const life = 0.8 + rng() * 1.2;
+                    const size = 6 + rng() * (12 + intensity * 1.8);
+                    sim.particles.push({
+                        kind: 'fire',
+                        x: px, y: py,
+                        vx, vy,
+                        age: 0,
+                        life,
+                        size,
+                        heat: 1.0,
+                        spin: (rng() - 0.5) * 2
+                    });
+                }
+
+                for (let i = 0; i < cloudCount; i++) {
+                    const a = rng() * Math.PI * 2;
+                    const r = Math.pow(rng(), 0.65) * (28 + intensity * 3.1);
+                    const px = sim.center.x + Math.cos(a) * r;
+                    const py = sim.center.y + Math.sin(a) * r * 0.55;
+                    const lift = (60 + intensity * 22) * upBias;
+                    const vx = (rng() - 0.5) * (26 + intensity * 4);
+                    const vy = -lift * (0.55 + 0.45 * rng());
+                    const drift = (rng() - 0.5) * 8;
+                    const life = 9 + rng() * 18;
+                    const size = 10 + rng() * (26 + intensity * 3.6);
+                    sim.particles.push({
+                        kind: 'smoke',
+                        x: px, y: py,
+                        vx: vx + drift,
+                        vy,
+                        age: 0,
+                        life,
+                        size,
+                        alpha: 0.55,
+                        hue: 26 + rng() * 14,
+                        wobble: rng() * 10
+                    });
+                }
+
+                for (let i = 0; i < debrisCount; i++) {
+                    const a = rng() * Math.PI * 2;
+                    const sp = (70 + intensity * 26) * (0.35 + 0.65 * rng());
+                    const px = sim.center.x + (rng() - 0.5) * (12 + intensity * 3);
+                    const py = sim.center.y + (rng() - 0.5) * (8 + intensity * 2.5);
+                    const vx = Math.cos(a) * sp;
+                    const vy = Math.sin(a) * sp * 0.6 - sp * (sim.params.burst === 'air' ? 0.15 : 0.1);
+                    const life = 2.5 + rng() * 5.2;
+                    const size = 1.2 + rng() * (3.6 + intensity * 0.4);
+                    sim.debris.push({
+                        x: px, y: py,
+                        vx, vy,
+                        age: 0,
+                        life,
+                        size,
+                        rot: rng() * Math.PI * 2,
+                        rv: (rng() - 0.5) * 6
+                    });
+                }
+
+                sim.playing = true;
+                updateHud();
+            }
+
+            function integrate(dt) {
+                sim.t += dt * sim.timeScale;
+                sim.t = clamp(sim.t, 0, sim.duration);
+
+                const intensity = sim.params.intensity;
+                const drag = 0.985 - intensity * 0.0015;
+                const smokeDrag = 0.995;
+                const gravity = 120;
+
+                for (let i = sim.particles.length - 1; i >= 0; i--) {
+                    const p = sim.particles[i];
+                    p.age += dt * sim.timeScale;
+                    if (p.age > p.life) {
+                        sim.particles.splice(i, 1);
+                        continue;
+                    }
+
+                    if (p.kind === 'fire') {
+                        p.vx *= drag;
+                        p.vy *= drag;
+                        p.x += p.vx * dt;
+                        p.y += p.vy * dt;
+                        p.heat = clamp(1 - p.age / p.life, 0, 1);
+                    } else {
+                        p.vx *= smokeDrag;
+                        p.vy = lerp(p.vy, -18 - intensity * 4, 0.012);
+                        const wob = Math.sin((p.age + p.wobble) * 0.8) * 10;
+                        p.x += (p.vx + wob) * dt;
+                        p.y += p.vy * dt;
+                    }
+                }
+
+                for (let i = sim.debris.length - 1; i >= 0; i--) {
+                    const d = sim.debris[i];
+                    d.age += dt * sim.timeScale;
+                    if (d.age > d.life) {
+                        sim.debris.splice(i, 1);
+                        continue;
+                    }
+                    d.vx *= 0.99;
+                    d.vy += gravity * dt;
+                    d.x += d.vx * dt;
+                    d.y += d.vy * dt;
+                    d.rot += d.rv * dt;
+                }
+
+                if (sim.params.fx.shake) {
+                    sim.shake.t += dt * sim.timeScale;
+                }
+            }
+
+            function drawBackground() {
+                const w = el.canvas.width;
+                const h = el.canvas.height;
+                ctx.clearRect(0, 0, w, h);
+
+                const grd = ctx.createLinearGradient(0, 0, 0, h);
+                grd.addColorStop(0, 'rgba(0, 0, 0, 1)');
+                grd.addColorStop(0.5, 'rgba(3, 7, 18, 1)');
+                grd.addColorStop(1, 'rgba(0, 0, 0, 1)');
+                ctx.fillStyle = grd;
+                ctx.fillRect(0, 0, w, h);
+
+                const horizonY = h * 0.62 + sim.view.panY;
+                ctx.save();
+                ctx.globalAlpha = 0.8;
+                ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+                ctx.beginPath();
+                ctx.moveTo(0, horizonY);
+                ctx.lineTo(w, horizonY);
+                ctx.stroke();
+                ctx.restore();
+
+                if (sim.params.env === 'city') {
+                    ctx.save();
+                    ctx.translate(w * 0.5 + sim.view.panX, horizonY);
+                    ctx.scale(sim.view.zoom, 1);
+                    for (const b of sim.city) {
+                        const alpha = lerp(0.15, 0.45, b.depth);
+                        ctx.fillStyle = `rgba(10,12,20,${alpha})`;
+                        const x = b.x;
+                        const base = 6;
+                        const y = -b.h * b.depth;
+                        ctx.fillRect(x, y, b.w, b.h * b.depth + base);
+                        ctx.fillStyle = `rgba(80,160,255,${alpha * 0.18})`;
+                        if (b.depth > 0.75) {
+                            ctx.fillRect(x + 3, y + 10, 2, 6);
+                            ctx.fillRect(x + b.w - 7, y + 18, 2, 6);
+                        }
+                    }
+                    ctx.restore();
+                }
+            }
+
+            function drawRings() {
+                if (!sim.params.fx.rings && !sim.params.fx.shock) return;
+                const baseScale = sim.view.zoom;
+                ctx.save();
+                const w = el.canvas.width;
+                const h = el.canvas.height;
+                const origin = worldToScreen(sim.center.x, sim.center.y);
+
+                for (const r of sim.rings) {
+                    const age = sim.t - r.t0;
+                    if (age < 0 || age > r.life) continue;
+
+                    if (r.type === 'shock' && sim.params.fx.shock) {
+                        const pr = age * r.speed;
+                        const a = 0.9 * Math.pow(1 - age / r.life, 1.4);
+                        ctx.globalAlpha = a;
+                        ctx.lineWidth = (r.width * baseScale) * (0.7 + 0.3 * (1 - age / r.life));
+                        ctx.strokeStyle = 'rgba(180,220,255,0.75)';
+                        ctx.beginPath();
+                        ctx.ellipse(origin.x, origin.y, pr * baseScale, pr * baseScale * 0.52, 0, 0, Math.PI * 2);
+                        ctx.stroke();
+                    }
+
+                    if (r.type === 'dust' && sim.params.fx.debris) {
+                        const pr = age * r.speed;
+                        const a = 0.5 * Math.pow(1 - age / r.life, 1.1);
+                        ctx.globalAlpha = a;
+                        ctx.lineWidth = (r.width * baseScale) * 0.6;
+                        ctx.strokeStyle = 'rgba(255,190,120,0.35)';
+                        ctx.beginPath();
+                        ctx.ellipse(origin.x, origin.y, pr * baseScale, pr * baseScale * 0.52, 0, 0, Math.PI * 2);
+                        ctx.stroke();
+                    }
+
+                    if (r.type === 'zone' && sim.params.fx.rings) {
+                        ctx.globalAlpha = 0.38;
+                        ctx.lineWidth = 2 * baseScale;
+                        ctx.strokeStyle = 'rgba(255,255,255,0.18)';
+                        ctx.setLineDash([6 * baseScale, 6 * baseScale]);
+                        ctx.beginPath();
+                        ctx.ellipse(origin.x, origin.y, r.r * baseScale, r.r * baseScale * 0.52, 0, 0, Math.PI * 2);
+                        ctx.stroke();
+                        ctx.setLineDash([]);
+
+                        const labelPos = worldToScreen(sim.center.x + r.r * 0.72, sim.center.y - r.r * 0.16);
+                        ctx.globalAlpha = 0.55;
+                        ctx.fillStyle = 'rgba(255,255,255,0.78)';
+                        ctx.font = `${Math.max(10, Math.floor(12 * baseScale))}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif`;
+                        ctx.fillText(r.label, labelPos.x, labelPos.y);
+                    }
+                }
+                ctx.restore();
+            }
+
+            function drawParticles() {
+                const w = el.canvas.width;
+                const h = el.canvas.height;
+                const baseScale = sim.view.zoom;
+                const camShake = sim.params.fx.shake ? Math.min(1, (sim.params.intensity / 10) * 1.2) : 0;
+                const shakeAmp = (sim.t < 2.2 ? (1 - sim.t / 2.2) : 0) * camShake;
+                const shakeX = sim.params.fx.shake ? Math.sin(sim.shake.t * 30) * 6 * shakeAmp : 0;
+                const shakeY = sim.params.fx.shake ? Math.cos(sim.shake.t * 26) * 4 * shakeAmp : 0;
+
+                ctx.save();
+                ctx.translate(shakeX, shakeY);
+
+                const origin = worldToScreen(sim.center.x, sim.center.y);
+                const t = sim.t;
+                const intensity = sim.params.intensity;
+
+                const fireballRadius = (90 + intensity * 24) * easeOutCubic(t / 1.6);
+                const fireballAlpha = sim.params.fx.flash ? clamp(1.15 - t * 0.75, 0, 1) : 0;
+                if (fireballAlpha > 0.001) {
+                    const r = fireballRadius * baseScale;
+                    const g = ctx.createRadialGradient(origin.x, origin.y, 0, origin.x, origin.y, r);
+                    g.addColorStop(0, `rgba(255,255,255,${0.90 * fireballAlpha})`);
+                    g.addColorStop(0.18, `rgba(255,230,180,${0.85 * fireballAlpha})`);
+                    g.addColorStop(0.52, `rgba(255,120,40,${0.35 * fireballAlpha})`);
+                    g.addColorStop(1, 'rgba(0,0,0,0)');
+                    ctx.fillStyle = g;
+                    ctx.beginPath();
+                    ctx.arc(origin.x, origin.y, r, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                if (sim.params.fx.cloud || sim.params.fx.debris) {
+                    const ordered = [];
+                    if (sim.params.fx.cloud) {
+                        for (const p of sim.particles) if (p.kind === 'smoke') ordered.push(p);
+                    }
+                    if (sim.params.fx.debris) {
+                        for (const d of sim.debris) ordered.push(d);
+                    }
+
+                    ordered.sort((a, b) => (a.y ?? 0) - (b.y ?? 0));
+
+                    for (const obj of ordered) {
+                        if (obj.kind === 'smoke') {
+                            const ageN = obj.age / obj.life;
+                            const a = obj.alpha * (0.2 + 0.8 * (1 - ageN)) * (ageN < 0.1 ? ageN / 0.1 : 1);
+                            if (a <= 0.003) continue;
+                            const sx = origin.x + obj.x * baseScale;
+                            const sy = origin.y + obj.y * baseScale * 0.75 - (30 + intensity * 7) * baseScale * easeOutCubic(clamp(obj.age / 8, 0, 1));
+                            const s = obj.size * baseScale * (0.8 + ageN * 1.5);
+                            const g = ctx.createRadialGradient(sx, sy, 0, sx, sy, s);
+                            g.addColorStop(0, `rgba(255,220,180,${0.12 * a})`);
+                            g.addColorStop(0.35, `rgba(80,70,60,${0.55 * a})`);
+                            g.addColorStop(1, 'rgba(0,0,0,0)');
+                            ctx.fillStyle = g;
+                            ctx.beginPath();
+                            ctx.arc(sx, sy, s, 0, Math.PI * 2);
+                            ctx.fill();
+                        } else {
+                            const ageN = obj.age / obj.life;
+                            const a = 0.9 * (1 - ageN);
+                            if (a <= 0.002) continue;
+                            const sx = origin.x + obj.x * baseScale;
+                            const sy = origin.y + obj.y * baseScale * 0.75;
+                            const s = obj.size * baseScale;
+                            ctx.save();
+                            ctx.translate(sx, sy);
+                            ctx.rotate(obj.rot);
+                            ctx.globalAlpha = a;
+                            ctx.fillStyle = 'rgba(255,210,140,0.7)';
+                            ctx.fillRect(-s, -s * 0.4, s * 2, s * 0.8);
+                            ctx.restore();
+                        }
+                    }
+                }
+
+                if (sim.params.fx.debris) {
+                    ctx.save();
+                    ctx.globalCompositeOperation = 'lighter';
+                    for (const p of sim.particles) {
+                        if (p.kind !== 'fire') continue;
+                        const ageN = p.age / p.life;
+                        const a = 0.9 * (1 - ageN) * (0.4 + p.heat * 0.6);
+                        if (a <= 0.002) continue;
+                        const sx = origin.x + p.x * baseScale;
+                        const sy = origin.y + p.y * baseScale * 0.75;
+                        const s = p.size * baseScale * (0.6 + 0.8 * (1 - ageN));
+                        const g = ctx.createRadialGradient(sx, sy, 0, sx, sy, s);
+                        g.addColorStop(0, `rgba(255,255,255,${0.35 * a})`);
+                        g.addColorStop(0.2, `rgba(255,200,120,${0.55 * a})`);
+                        g.addColorStop(0.55, `rgba(255,90,20,${0.28 * a})`);
+                        g.addColorStop(1, 'rgba(0,0,0,0)');
+                        ctx.fillStyle = g;
+                        ctx.beginPath();
+                        ctx.arc(sx, sy, s, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                    ctx.restore();
+                }
+
+                ctx.restore();
+
+                if (sim.params.fx.flash) {
+                    const flashT = sim.t;
+                    const a = flashT < 0.12 ? 1 : flashT < 0.6 ? Math.pow(1 - (flashT - 0.12) / 0.48, 1.6) : 0;
+                    el.flash.style.opacity = String(clamp(a * 0.95, 0, 0.95));
+                } else {
+                    el.flash.style.opacity = '0';
+                }
+            }
+
+            function updateHud() {
+                if (!el.hudTime) return;
+                el.hudTime.textContent = `${sim.t.toFixed(1)}s`;
+                el.hudIntensity.textContent = `${sim.params.intensity}`;
+                el.hudDistance.textContent = pickDistanceLabel(sim.params.distance);
+
+                const dist = getDistanceMeters();
+                const speed = 343;
+                const eta = dist / speed;
+                const remaining = eta - sim.t;
+                el.hudSound.textContent = remaining > 0 ? `${remaining.toFixed(1)}s` : '已到达';
+                el.hudState.textContent = sim.playing ? '播放中' : sim.t > 0 ? '已暂停' : '就绪';
+            }
+
+            function render(ts) {
+                if (!sim.running) return;
+                raf = requestAnimationFrame(render);
+                if (!sim.lastTs) sim.lastTs = ts;
+                const dt = clamp((ts - sim.lastTs) / 1000, 0, 0.05);
+                sim.lastTs = ts;
+
+                if (sim.playing && !isScrubbing) {
+                    integrate(dt);
+                    if (sim.t >= sim.duration) {
+                        sim.playing = false;
+                    }
+                    el.timeline.value = String(sim.t.toFixed(1));
+                }
+
+                drawBackground();
+                drawRings();
+                drawParticles();
+                updateHud();
+            }
+
+            function setTime(target) {
+                const t = clamp(target, 0, sim.duration);
+                const prevSeed = sim.seed;
+                const prevParams = JSON.parse(JSON.stringify(sim.params));
+                sim.seed = prevSeed;
+                sim.params = prevParams;
+                detonate();
+                sim.playing = false;
+                sim.t = 0;
+                sim.lastTs = 0;
+                const step = 1 / 60;
+                const steps = Math.floor(t / step);
+                for (let i = 0; i < steps; i++) {
+                    integrate(step);
+                }
+                sim.t = t;
+                updateHud();
+            }
+
+            function wireUi() {
+                const on = (id, evt, fn) => el[id] && el[id].addEventListener(evt, fn);
+
+                on('intensity', 'input', () => {
+                    sim.params.intensity = Number(el.intensity.value);
+                    el.hudIntensity.textContent = String(sim.params.intensity);
+                });
+                on('burst', 'change', () => {
+                    sim.params.burst = el.burst.value;
+                });
+                on('env', 'change', () => {
+                    sim.params.env = el.env.value;
+                });
+                on('distance', 'input', () => {
+                    sim.params.distance = Number(el.distance.value);
+                    el.hudDistance.textContent = pickDistanceLabel(sim.params.distance);
+                });
+                on('timeScale', 'input', () => {
+                    sim.timeScale = Number(el.timeScale.value);
+                });
+                on('quality', 'change', () => {
+                    sim.params.quality = el.quality.value;
+                });
+
+                on('fxFlash', 'change', () => { sim.params.fx.flash = el.fxFlash.checked; });
+                on('fxShock', 'change', () => { sim.params.fx.shock = el.fxShock.checked; });
+                on('fxCloud', 'change', () => { sim.params.fx.cloud = el.fxCloud.checked; });
+                on('fxDebris', 'change', () => { sim.params.fx.debris = el.fxDebris.checked; });
+                on('fxRings', 'change', () => { sim.params.fx.rings = el.fxRings.checked; });
+                on('fxShake', 'change', () => { sim.params.fx.shake = el.fxShake.checked; });
+
+                on('detonate', 'click', () => {
+                    sim.seed = (Date.now() >>> 0) ^ (Math.random() * 1e9 >>> 0);
+                    detonate();
+                });
+                on('play', 'click', () => {
+                    sim.playing = !sim.playing;
+                    el.play.textContent = sim.playing ? '暂停' : '播放';
+                    updateHud();
+                });
+                on('reset', 'click', () => {
+                    sim.seed = 1337;
+                    sim.t = 0;
+                    sim.playing = false;
+                    sim.lastTs = 0;
+                    initScene();
+                    el.timeline.value = '0';
+                    el.play.textContent = '播放';
+                    el.flash.style.opacity = '0';
+                    updateHud();
+                });
+
+                on('timeline', 'pointerdown', () => {
+                    isScrubbing = true;
+                    wasPlayingBeforeScrub = sim.playing;
+                    sim.playing = false;
+                });
+                on('timeline', 'pointerup', () => {
+                    isScrubbing = false;
+                    if (wasPlayingBeforeScrub) {
+                        sim.playing = true;
+                        el.play.textContent = '暂停';
+                    }
+                });
+                on('timeline', 'input', () => {
+                    const v = Number(el.timeline.value);
+                    setTime(v);
+                });
+
+                const canvas = el.canvas;
+                const onPointerDown = (e) => {
+                    isPointerDown = true;
+                    pointerLast.x = e.clientX;
+                    pointerLast.y = e.clientY;
+                };
+                const onPointerMove = (e) => {
+                    if (!isPointerDown) return;
+                    const dx = e.clientX - pointerLast.x;
+                    const dy = e.clientY - pointerLast.y;
+                    pointerLast.x = e.clientX;
+                    pointerLast.y = e.clientY;
+                    sim.view.panX += dx * (window.devicePixelRatio || 1);
+                    sim.view.panY += dy * (window.devicePixelRatio || 1);
+                };
+                const onPointerUp = () => {
+                    isPointerDown = false;
+                };
+                const onWheel = (e) => {
+                    if (wheelCooldown > 0) return;
+                    wheelCooldown = 1;
+                    setTimeout(() => { wheelCooldown = 0; }, 20);
+                    const delta = Math.sign(e.deltaY);
+                    const zoomFactor = delta > 0 ? 0.92 : 1.08;
+                    const rect = canvas.getBoundingClientRect();
+                    const mx = e.clientX - rect.left;
+                    const my = e.clientY - rect.top;
+                    const before = screenToWorld(mx, my);
+                    sim.view.zoom = clamp(sim.view.zoom * zoomFactor, 0.65, 2.2);
+                    const dpr = Math.min(2, window.devicePixelRatio || 1);
+                    const w = el.canvas.width;
+                    const h = el.canvas.height;
+                    const sx = mx * dpr;
+                    const sy = my * dpr;
+                    sim.view.panX = sx - w * 0.5 - before.x * sim.view.zoom;
+                    sim.view.panY = sy - h * 0.62 - before.y * sim.view.zoom;
+                };
+
+                canvas.addEventListener('pointerdown', onPointerDown);
+                window.addEventListener('pointermove', onPointerMove);
+                window.addEventListener('pointerup', onPointerUp);
+                canvas.addEventListener('wheel', onWheel, { passive: true });
+
+                canvas.addEventListener('dblclick', () => {
+                    resetView();
+                });
+            }
+
+            function ensureElements() {
+                el.modal = document.getElementById('nukeModal');
+                el.app = document.getElementById('nukeApp');
+                el.canvas = document.getElementById('nukeCanvas');
+                el.flash = document.getElementById('nukeFlash');
+
+                el.hudState = document.getElementById('nukeHudState');
+                el.hudTime = document.getElementById('nukeHudTime');
+                el.hudIntensity = document.getElementById('nukeHudIntensity');
+                el.hudDistance = document.getElementById('nukeHudDistance');
+                el.hudSound = document.getElementById('nukeHudSound');
+
+                el.intensity = document.getElementById('nukeIntensity');
+                el.burst = document.getElementById('nukeBurst');
+                el.env = document.getElementById('nukeEnv');
+                el.distance = document.getElementById('nukeDistance');
+                el.timeScale = document.getElementById('nukeTimeScale');
+                el.quality = document.getElementById('nukeQuality');
+                el.timeline = document.getElementById('nukeTimeline');
+
+                el.fxFlash = document.getElementById('nukeFxFlash');
+                el.fxShock = document.getElementById('nukeFxShock');
+                el.fxCloud = document.getElementById('nukeFxCloud');
+                el.fxDebris = document.getElementById('nukeFxDebris');
+                el.fxRings = document.getElementById('nukeFxRings');
+                el.fxShake = document.getElementById('nukeFxShake');
+
+                el.detonate = document.getElementById('nukeDetonate');
+                el.play = document.getElementById('nukePlay');
+                el.reset = document.getElementById('nukeReset');
+            }
+
+            function open() {
+                ensureElements();
+                if (!el.modal || !el.canvas || !el.app) return;
+                el.modal.classList.remove('hidden');
+                if (!ctx) ctx = el.canvas.getContext('2d', { alpha: false, desynchronized: true });
+                resize();
+                if (!initialized) {
+                    initScene();
+                    initialized = true;
+                }
+                sim.timeScale = Number(el.timeScale.value || 1);
+                sim.params.intensity = Number(el.intensity.value || 6);
+                sim.params.burst = el.burst.value || 'air';
+                sim.params.env = el.env.value || 'plain';
+                sim.params.distance = Number(el.distance.value || 2);
+                sim.params.quality = el.quality.value || 'med';
+                sim.params.fx.flash = el.fxFlash.checked;
+                sim.params.fx.shock = el.fxShock.checked;
+                sim.params.fx.cloud = el.fxCloud.checked;
+                sim.params.fx.debris = el.fxDebris.checked;
+                sim.params.fx.rings = el.fxRings.checked;
+                sim.params.fx.shake = el.fxShake.checked;
+                el.timeline.max = String(sim.duration);
+                if (!uiWired) {
+                    wireUi();
+                    uiWired = true;
+                }
+                if (sim.t === 0 && sim.particles.length === 0 && sim.debris.length === 0 && sim.rings.length === 0) {
+                    sim.seed = (Date.now() >>> 0) ^ (Math.random() * 1e9 >>> 0);
+                    detonate();
+                }
+                sim.running = true;
+                sim.lastTs = 0;
+                cancelAnimationFrame(raf);
+                raf = requestAnimationFrame(render);
+                el.play.textContent = sim.playing ? '暂停' : '播放';
+                updateHud();
+            }
+
+            function close() {
+                ensureElements();
+                if (!el.modal) return;
+                el.modal.classList.add('hidden');
+                sim.playing = false;
+                sim.running = false;
+                cancelAnimationFrame(raf);
+                updateHud();
+            }
+
+            window.addEventListener('resize', () => {
+                resize();
+            });
+
+            return { open, close };
+        })();
+    </script>
+    <!-- 卡片管理 Modal -->
+    <div id="admin-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[100] hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-5xl mx-4 h-[80vh] flex flex-col overflow-hidden">
+            <div class="p-4 border-b border-gray-200 flex justify-between items-center bg-white">
+                <h2 class="text-xl font-bold text-gray-900">首页卡片管理</h2>
+                <button onclick="closeAdminModal()" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="flex-1 overflow-y-auto p-4 bg-gray-50" id="admin-card-list">
+                <!-- 动态渲染的列表 -->
+            </div>
+            <div class="p-4 border-t border-gray-200 flex justify-end gap-3 bg-white">
+                <button onclick="closeAdminModal()" class="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50">取消</button>
+                <button id="admin-save-btn" onclick="saveAdminChanges()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">保存修改</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 卡片管理逻辑 ---
+        const adminBtn = document.getElementById('admin-avatar-btn');
+        const adminModal = document.getElementById('admin-modal');
+        const adminList = document.getElementById('admin-card-list');
+        let editingCards = [];
+
+        const categoryMap = {
+            'computer-ai': { text: '计算机AI', color: 'bg-indigo-100 text-indigo-700' },
+            'universe': { text: '宇宙', color: 'bg-blue-100 text-blue-700' },
+            'math': { text: '数学', color: 'bg-green-100 text-green-700' },
+            'physics': { text: '物理', color: 'bg-yellow-100 text-yellow-700' },
+            'chemistry': { text: '化学', color: 'bg-pink-100 text-pink-700' },
+            'biology': { text: '生物', color: 'bg-emerald-100 text-emerald-700' },
+            'engineering': { text: '工程', color: 'bg-orange-100 text-orange-700' }
+        };
+
+        const statusMap = {
+            '已上线': 'bg-teal-100 text-teal-700',
+            '未上线': 'bg-gray-100 text-gray-700',
+            '测试中': 'bg-orange-100 text-orange-700',
+            '开发中': 'bg-purple-100 text-purple-700'
+        };
+
+        if (adminBtn) {
+            adminBtn.addEventListener('click', () => {
+                // Parse current DOM
+                const cardEls = Array.from(document.querySelectorAll('#cards-container > div.card-hover'));
+                editingCards = cardEls.map((card, index) => {
+                    const title = card.querySelector('.card-title') ? card.querySelector('.card-title').innerText.trim() : '';
+                    const desc = card.querySelector('.card-desc') ? card.querySelector('.card-desc').innerText.trim() : '';
+                    const versionEl = card.querySelector('.absolute.bottom-2');
+                    const version = versionEl ? versionEl.innerText.trim() : '';
+                    const tags = card.querySelectorAll('.card-tags span');
+                    const status = tags[0] ? tags[0].innerText.trim() : '已上线';
+                    let categoryVal = card.getAttribute('data-category') || 'computer-ai';
+                    
+                    // 特殊处理三体等之前写死的标签，尝试自动映射
+                    if (tags[1] && tags[1].innerText.trim() === '宇宙' && categoryVal !== 'universe') categoryVal = 'universe';
+
+                    return {
+                        dom: card,
+                        id: card.id || `card-tmp-${Date.now()}-${index}`,
+                        title, desc, version, status, categoryVal
+                    };
+                });
+                renderAdminList();
+                adminModal.classList.remove('hidden');
+            });
+        }
+
+        function closeAdminModal() {
+            adminModal.classList.add('hidden');
+        }
+
+        function renderAdminList() {
+            adminList.innerHTML = '';
+            editingCards.forEach((card, index) => {
+                const row = document.createElement('div');
+                row.className = 'flex items-center gap-3 p-3 bg-white border border-gray-200 rounded shadow-sm mb-3';
+                
+                row.innerHTML = `
+                    <div class="flex flex-col gap-1 items-center justify-center border-r pr-3">
+                        <button onclick="moveCard(${index}, -1)" class="p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded" title="上移" ${index === 0 ? 'invisible opacity-0 cursor-default' : ''}>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                        </button>
+                        <span class="text-xs font-mono text-gray-400">${index + 1}</span>
+                        <button onclick="moveCard(${index}, 1)" class="p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded" title="下移" ${index === editingCards.length - 1 ? 'invisible opacity-0 cursor-default' : ''}>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-12 gap-3 flex-1">
+                        <div class="col-span-2">
+                            <label class="block text-xs font-medium text-gray-500 mb-1">名字</label>
+                            <input type="text" class="w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none" value="${card.title}" onchange="updateCard(${index}, 'title', this.value)">
+                        </div>
+                        <div class="col-span-4">
+                            <label class="block text-xs font-medium text-gray-500 mb-1">描述</label>
+                            <input type="text" class="w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none" value="${card.desc}" onchange="updateCard(${index}, 'desc', this.value)">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-xs font-medium text-gray-500 mb-1">版本</label>
+                            <input type="text" class="w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none" value="${card.version}" onchange="updateCard(${index}, 'version', this.value)">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-xs font-medium text-gray-500 mb-1">上线状态</label>
+                            <select class="w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:ring-1 focus:ring-blue-500 outline-none" onchange="updateCard(${index}, 'status', this.value)">
+                                ${Object.keys(statusMap).map(s => `<option value="${s}" ${card.status === s ? 'selected' : ''}>${s}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-xs font-medium text-gray-500 mb-1">类型分类</label>
+                            <select class="w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:ring-1 focus:ring-blue-500 outline-none" onchange="updateCard(${index}, 'categoryVal', this.value)">
+                                ${Object.entries(categoryMap).map(([k, v]) => `<option value="${k}" ${card.categoryVal === k ? 'selected' : ''}>${v.text}</option>`).join('')}
+                            </select>
+                        </div>
+                    </div>
+                `;
+                adminList.appendChild(row);
+            });
+        }
+
+        function moveCard(index, dir) {
+            if (index + dir < 0 || index + dir >= editingCards.length) return;
+            const temp = editingCards[index];
+            editingCards[index] = editingCards[index + dir];
+            editingCards[index + dir] = temp;
+            renderAdminList();
+        }
+
+        function updateCard(index, field, value) {
+            editingCards[index][field] = value;
+        }
+
+        function saveAdminChanges() {
+            const list = document.getElementById('admin-cards-list');
+            const items = list.querySelectorAll('.admin-card-item');
+            
+            const saveBtn = document.getElementById('admin-save-btn');
+            if (saveBtn) {
+                if (saveBtn.disabled) return;
+                saveBtn.innerText = '保存中...';
+                saveBtn.disabled = true;
+                saveBtn.classList.add('opacity-70', 'cursor-not-allowed');
+            }
+
+            // Apply changes to the main DOM
+            items.forEach((item) => {
+                const domId = item.getAttribute('data-id');
+                const dom = document.getElementById(domId);
+                if (dom) {
+                    const title = item.querySelector('.edit-title').value;
+                    const desc = item.querySelector('.edit-desc').value;
+                    const version = item.querySelector('.edit-version').value;
+                    const status = item.querySelector('.edit-status').value;
+                    const categoryVal = item.querySelector('.edit-category').value;
+                    
+                    const titleEl = dom.querySelector('.card-title');
+                    if (titleEl) titleEl.innerText = title;
+                    
+                    const descEl = dom.querySelector('.card-desc');
+                    if (descEl) descEl.innerText = desc;
+                    
+                    const versionEl = dom.querySelector('.absolute.bottom-2');
+                    if (versionEl) versionEl.innerText = version;
+                    
+                    const tagsContainer = dom.querySelector('.card-tags');
+                    if (tagsContainer) {
+                        tagsContainer.innerHTML = '';
+                        const statusMap = {
+                            '已上线': 'bg-teal-100 text-teal-700',
+                            '未上线': 'bg-gray-100 text-gray-700',
+                            '测试中': 'bg-yellow-100 text-yellow-700',
+                            '开发中': 'bg-blue-100 text-blue-700'
+                        };
+                        const statusColor = statusMap[status] || 'bg-gray-100 text-gray-700';
+                        const statusSpan = document.createElement('span');
+                        statusSpan.className = `px-2 py-0.5 text-xs rounded ${statusColor}`;
+                        statusSpan.innerText = status;
+                        tagsContainer.appendChild(statusSpan);
+                        
+                        const categoryMap = {
+                            'computer-ai': { text: '计算机AI', color: 'bg-purple-100 text-purple-700' },
+                            'universe': { text: '宇宙', color: 'bg-blue-100 text-blue-700' },
+                            'math': { text: '数学', color: 'bg-indigo-100 text-indigo-700' },
+                            'physics': { text: '物理', color: 'bg-yellow-100 text-yellow-700' },
+                            'chemistry': { text: '化学', color: 'bg-emerald-100 text-emerald-700' },
+                            'biology': { text: '生物', color: 'bg-green-100 text-green-700' },
+                            'engineering': { text: '工程', color: 'bg-orange-100 text-orange-700' }
+                        };
+                        const catInfo = categoryMap[categoryVal] || categoryMap['computer-ai'];
+                        const catSpan = document.createElement('span');
+                        catSpan.className = `px-2 py-0.5 text-xs rounded ${catInfo.color}`;
+                        catSpan.innerText = catInfo.text;
+                        tagsContainer.appendChild(catSpan);
+                    }
+                    dom.setAttribute('data-category', categoryVal);
+                    
+                    // Reorder
+                    const container = document.getElementById('cards-container');
+                    container.appendChild(dom);
+                }
+            });
+
+            // Clone DOM to save cleanly
+            const cloneNode = document.documentElement.cloneNode(true);
+            
+            // Clean up the clone
+            const cloneModal = cloneNode.querySelector('#admin-modal');
+            if (cloneModal) cloneModal.classList.add('hidden');
+            const cloneBtn = cloneNode.querySelector('#admin-save-btn');
+            if (cloneBtn) {
+                cloneBtn.innerText = '保存修改';
+                cloneBtn.removeAttribute('disabled');
+                cloneBtn.classList.remove('opacity-70', 'cursor-not-allowed');
+            }
+            
+            // Remove dynamically injected Tailwind styles to prevent duplication
+            const styles = cloneNode.querySelectorAll('style');
+            styles.forEach(style => {
+                if (style.innerHTML.includes('tailwindcss')) {
+                    style.remove();
+                }
+            });
+
+            const fullHtml = '<!DOCTYPE html>\n<html lang="zh-CN">\n' + cloneNode.innerHTML + '\n</html>';
+
+            fetch('/update-html', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ html: fullHtml })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('源码文件更新成功！');
+                    closeAdminModal();
+                } else {
+                    alert('源码写入失败：' + data.error);
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('源码写入失败：请确保在 start-all.sh 中启动了同步服务(sync-server)。\n如果仍有问题，可以刷新页面重试。');
+            })
+            .finally(() => {
+                if (saveBtn) {
+                    saveBtn.innerText = '保存修改';
+                    saveBtn.disabled = false;
+                    saveBtn.classList.remove('opacity-70', 'cursor-not-allowed');
+                }
+            });
+        }
+
+        // --- 页面加载时恢复数据 ---
+        function loadAdminChanges() {
+            // 确保所有卡片都有 ID 以便恢复时能匹配到
+            const allCards = Array.from(document.querySelectorAll('#cards-container > div.card-hover'));
+            allCards.forEach((card, index) => {
+                if (!card.id) {
+                    card.id = 'card-auto-' + index;
+                }
+            });
+
+            const savedStr = localStorage.getItem('ddsyz_cards_config');
+            if (savedStr) {
+                try {
+                    const savedConfig = JSON.parse(savedStr);
+                    const container = document.getElementById('cards-container');
+                    
+                    savedConfig.forEach(data => {
+                        const dom = document.getElementById(data.id);
+                        if (dom) {
+                            const titleEl = dom.querySelector('.card-title');
+                            if (titleEl) titleEl.innerText = data.title;
+                            
+                            const descEl = dom.querySelector('.card-desc');
+                            if (descEl) descEl.innerText = data.desc;
+                            
+                            const versionEl = dom.querySelector('.absolute.bottom-2');
+                            if (versionEl) versionEl.innerText = data.version;
+                            
+                            const tagsContainer = dom.querySelector('.card-tags');
+                            if (tagsContainer) {
+                                tagsContainer.innerHTML = '';
+                                
+                                const statusColor = statusMap[data.status] || 'bg-gray-100 text-gray-700';
+                                const statusSpan = document.createElement('span');
+                                statusSpan.className = `px-2 py-0.5 text-xs rounded ${statusColor}`;
+                                statusSpan.innerText = data.status;
+                                tagsContainer.appendChild(statusSpan);
+                                
+                                const catInfo = categoryMap[data.categoryVal] || categoryMap['computer-ai'];
+                                const catSpan = document.createElement('span');
+                                catSpan.className = `px-2 py-0.5 text-xs rounded ${catInfo.color}`;
+                                catSpan.innerText = catInfo.text;
+                                tagsContainer.appendChild(catSpan);
+                            }
+                            
+                            dom.setAttribute('data-category', data.categoryVal);
+                            
+                            // Reorder by appending it
+                            container.appendChild(dom);
+                        }
+                    });
+                } catch(e) {
+                    console.error('Failed to load card config', e);
+                }
+            }
+        }
+        
+        // 立即执行恢复
+        </script>
+</body>
+</html>
