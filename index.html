@@ -754,6 +754,52 @@
 
     <script>
         let currentCategory = 'all';
+        const modalAppUrls = {
+            starMapModal: { local: 'http://localhost:5178/', hosted: '/starmaps/' },
+            threeBodyModal: { local: 'http://localhost:5177/', hosted: '/threebody/' },
+            mathVizModal: { local: 'http://localhost:5174/', hosted: '/mathviz/' },
+            neuralNetworkModal: { local: 'http://localhost:5175/', hosted: '/neural/' },
+            waferLithographyModal: { local: 'http://localhost:5176/', hosted: '/wafer/' },
+            hehuaModal: { local: 'http://localhost:5179/', hosted: '/hehua/' },
+            nukeBlastModal: { local: 'http://localhost:5180/', hosted: '/nuke/' },
+            emFieldsModal: { local: 'http://localhost:5181/', hosted: '/em/' },
+            blackHoleModal: { local: 'http://localhost:5182/', hosted: '/black-hole/' },
+            digitalProduction3DModal: { local: 'http://localhost:5183/', hosted: '/digital-production/' },
+            relativeModal: { local: 'http://localhost:5184/', hosted: '/relativity/' },
+            impactModal: { local: 'http://localhost:5185/', hosted: '/impact/' },
+            buoyancyModal: { local: 'http://localhost:5186/', hosted: '/buoyancy/' },
+            cell3DModal: { local: 'http://localhost:5187/', hosted: '/cell/' },
+            typhoon3DModal: { local: 'http://localhost:5189/', hosted: '/typhoon/' },
+            orbitSimModal: { local: 'http://localhost:5190/', hosted: '/orbit/' },
+            circuitSimModal: { local: 'http://localhost:5191/', hosted: '/circuit/' }
+        };
+
+        function isHostedMode() {
+            return window.location.protocol !== 'file:' &&
+                window.location.hostname !== 'localhost' &&
+                window.location.hostname !== '127.0.0.1';
+        }
+
+        function getModalAppUrl(id) {
+            const config = modalAppUrls[id];
+            if (!config) return '';
+            return isHostedMode() ? config.hosted : config.local;
+        }
+
+        function refreshModalSource(id) {
+            const modal = document.getElementById(id);
+            const url = getModalAppUrl(id);
+            if (!modal) return url;
+            const iframe = modal.querySelector('iframe[data-src]');
+            if (iframe && url) {
+                iframe.setAttribute('data-src', url);
+            }
+            return url;
+        }
+
+        function refreshAllModalSources() {
+            Object.keys(modalAppUrls).forEach(refreshModalSource);
+        }
 
         function applyFilters() {
             const keyword = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
@@ -791,6 +837,7 @@
         function showModal(id) {
             var modal = document.getElementById(id);
             if (!modal) return;
+            refreshModalSource(id);
             modal.classList.remove('hidden');
             modal.style.display = 'flex';
             const iframe = modal.querySelector('iframe[data-src]');
@@ -899,7 +946,7 @@
         function openRelative() {
             const modal = document.getElementById('relativeModal');
             if (!modal) {
-                window.open('http://localhost:5184/', '_blank');
+                window.open(getModalAppUrl('relativeModal'), '_blank');
                 return;
             }
             showModal('relativeModal');
@@ -912,7 +959,7 @@
         function openBuoyancy() {
             const modal = document.getElementById('buoyancyModal');
             if (!modal) {
-                window.open('http://localhost:5186/', '_blank');
+                window.open(getModalAppUrl('buoyancyModal'), '_blank');
                 return;
             }
             showModal('buoyancyModal');
@@ -925,7 +972,7 @@
         function openImpact() {
             const modal = document.getElementById('impactModal');
             if (!modal) {
-                window.open('http://localhost:5185/', '_blank');
+                window.open(getModalAppUrl('impactModal'), '_blank');
                 return;
             }
             showModal('impactModal');
@@ -938,7 +985,7 @@
         function openCell3D() {
             const modal = document.getElementById('cell3DModal');
             if (!modal) {
-                window.open('http://localhost:5187/', '_blank');
+                window.open(getModalAppUrl('cell3DModal'), '_blank');
                 return;
             }
             showModal('cell3DModal');
@@ -951,7 +998,7 @@
         function openTyphoon3D() {
             const modal = document.getElementById('typhoon3DModal');
             if (!modal) {
-                window.open('http://localhost:5189/', '_blank');
+                window.open(getModalAppUrl('typhoon3DModal'), '_blank');
                 return;
             }
             showModal('typhoon3DModal');
@@ -964,7 +1011,7 @@
         function openCircuitSim() {
             const modal = document.getElementById('circuitSimModal');
             if (!modal) {
-                window.open('http://localhost:5191/', '_blank');
+                window.open(getModalAppUrl('circuitSimModal'), '_blank');
                 return;
             }
             showModal('circuitSimModal');
@@ -977,7 +1024,7 @@
         function openOrbitSim() {
             const modal = document.getElementById('orbitSimModal');
             if (!modal) {
-                window.open('http://localhost:5190/', '_blank');
+                window.open(getModalAppUrl('orbitSimModal'), '_blank');
                 return;
             }
             showModal('orbitSimModal');
@@ -988,6 +1035,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', function () {
+            refreshAllModalSources();
             const searchInput = document.getElementById('searchInput');
             if (searchInput) {
                 searchInput.addEventListener('input', applyFilters);
